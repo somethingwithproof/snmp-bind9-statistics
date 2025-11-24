@@ -1,0 +1,36 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      - id: perl-syntax
+        name: Perl Syntax Check
+        entry: perl -c
+        language: system
+        files: '\.p[lm]$'
+
+      - id: perl-critic
+        name: Perl::Critic
+        entry: bash -c 'if command -v perlcritic &> /dev/null; then perlcritic --severity 3; fi'
+        language: system
+        files: '\.p[lm]$'
+
+      - id: perltidy
+        name: Perl Tidy
+        entry: bash -c 'if command -v perltidy &> /dev/null; then perltidy -b; fi'
+        language: system
+        files: '\.p[lm]$'
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
