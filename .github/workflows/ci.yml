@@ -36,9 +36,20 @@ jobs:
 
     - name: Install dependencies
       run: |
+        # Install ExtUtils::MakeMaker first
+        cpanm --quiet --notest ExtUtils::MakeMaker
+
+        # Generate Makefile
+        perl Makefile.PL
+
+        # Install dependencies from Makefile
         cpanm --quiet --notest --installdeps .
-        cpanm --quiet --notest Test::MockObject Test::MockModule
-        cpanm --quiet --notest Net::SNMP File::Slurp Log::Log4perl Config::IniFiles
+
+        # Install test dependencies explicitly
+        cpanm --quiet --notest Test::More Test::MockObject Test::Warn File::Temp
+
+        # Install runtime dependencies
+        cpanm --quiet --notest Net::SNMP File::Slurp Log::Log4perl Config::IniFiles Try::Tiny
 
     - name: Run unit tests
       run: prove -r t/unit
