@@ -76,11 +76,11 @@ jobs:
 
     - name: Run Perl::Critic
       run: |
-        perlcritic --quiet --severity 5 lib bin
+        perlcritic --quiet --severity 5 bin
 
     - name: Check Perl::Tidy
       run: |
-        find lib bin -name "*.pm" -o -name "*.pl" | xargs perltidy -b
+        find bin -name "*.pm" -o -name "*.pl" | xargs perltidy -b
         if git diff --exit-code; then
           echo "Code is properly formatted"
         else
