@@ -27,7 +27,7 @@ jobs:
         perl-version: ['5.30', '5.32', '5.34']
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Set up Perl
       uses: shogo82148/actions-setup-perl@v1
@@ -62,7 +62,7 @@ jobs:
     timeout-minutes: 15  # Prevent hung jobs
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: Set up Perl
       uses: shogo82148/actions-setup-perl@v1
