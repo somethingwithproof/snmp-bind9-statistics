@@ -1,15 +1,13 @@
 # SNMP BIND9 Statistics
 
-[![Perl](https://img.shields.io/badge/Perl-5.10%2B-blue)](https://www.perl.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub release](https://img.shields.io/github/v/release/thomasvincent/snmp-bind9-statistics)](https://github.com/thomasvincent/snmp-bind9-statistics/releases)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/thomasvincent/snmp-bind9-statistics/graphs/commit-activity)
+[![CI](https://github.com/somethingwithproof/snmp-bind9-statistics/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/somethingwithproof/snmp-bind9-statistics/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 
 A comprehensive Perl-based monitoring solution for BIND9 DNS servers that exposes statistics via SNMP for integration with network monitoring systems.
 
 ## 🚀 Overview
 
-SNMP BIND9 Statistics is a production-ready tool that bridges the gap between BIND9's built-in statistics and SNMP-based monitoring infrastructure. It collects detailed DNS server metrics using `rndc stats` and exposes them through SNMP, enabling seamless integration with monitoring platforms like Nagios, Zabbix, PRTG, and others.
+SNMP BIND9 Statistics is a tool that bridges the gap between BIND9's built-in statistics and SNMP-based monitoring infrastructure. It collects detailed DNS server metrics using `rndc stats` and exposes them through SNMP, enabling seamless integration with monitoring platforms like Nagios, Zabbix, PRTG, and others.
 
 ## ✨ Features
 
@@ -42,12 +40,14 @@ SNMP BIND9 Statistics is a production-ready tool that bridges the gap between BI
 ## 📋 Requirements
 
 ### System Requirements
+
 - **Operating System**: Linux/Unix with BIND9
 - **Perl**: Version 5.10 or higher
 - **BIND9**: With `rndc` configured and operational
 - **Privileges**: Read access to BIND9 statistics file
 
 ### Perl Modules
+
 ```bash
 # Required modules
 Config::IniFiles
@@ -68,9 +68,10 @@ File::Temp
 ## 📦 Installation
 
 ### From GitHub
+
 ```bash
 # Clone the repository
-git clone https://github.com/thomasvincent/snmp-bind9-statistics.git
+git clone https://github.com/somethingwithproof/snmp-bind9-statistics.git
 cd snmp-bind9-statistics
 
 # Install Perl dependencies using CPAN
@@ -84,6 +85,7 @@ chmod +x bin/snmp_bind9_stats.pl
 ```
 
 ### Using Makefile.PL
+
 ```bash
 perl Makefile.PL
 make
@@ -121,7 +123,9 @@ agent_addr = 0.0.0.0
 ```
 
 ### Environment Variables
+
 You can override configuration using environment variables:
+
 ```bash
 export BIND9_STATS_FILE=/custom/path/named.stats
 export SNMP_COMMUNITY=secret
@@ -131,6 +135,7 @@ export SNMP_PORT=1161
 ## 🚀 Usage
 
 ### Basic Usage
+
 ```bash
 # Run with default configuration
 ./bin/snmp_bind9_stats.pl
@@ -148,7 +153,9 @@ export SNMP_PORT=1161
 ### Running as a Service
 
 #### Systemd Service
+
 Create `/etc/systemd/system/bind9-snmp.service`:
+
 ```ini
 [Unit]
 Description=SNMP BIND9 Statistics Agent
@@ -166,6 +173,7 @@ WantedBy=multi-user.target
 ```
 
 Enable and start the service:
+
 ```bash
 sudo systemctl daemon-reload
 sudo systemctl enable bind9-snmp
@@ -173,6 +181,7 @@ sudo systemctl start bind9-snmp
 ```
 
 #### Init.d Script (Legacy Systems)
+
 ```bash
 sudo cp contrib/init.d/bind9-snmp /etc/init.d/
 sudo chmod +x /etc/init.d/bind9-snmp
@@ -184,7 +193,7 @@ sudo service bind9-snmp start
 
 The tool uses the following OID structure:
 
-```
+```text
 Base OID: 1.3.6.1.4.1.99999.1
 
 Query Statistics (1.3.6.1.4.1.99999.1.1.*)
@@ -216,6 +225,7 @@ Resolver Statistics (1.3.6.1.4.1.99999.1.3.*)
 ```
 
 ### Querying via SNMP
+
 ```bash
 # Get all statistics
 snmpwalk -v2c -c public localhost 1.3.6.1.4.1.99999.1
@@ -230,6 +240,7 @@ snmpwalk -v2c -c public localhost 1.3.6.1.4.1.99999.1.1
 ## 🧪 Testing
 
 ### Unit Tests
+
 ```bash
 # Run all unit tests
 prove -r t/unit
@@ -242,6 +253,7 @@ prove -v t/unit/*.t
 ```
 
 ### Integration Tests
+
 ```bash
 # Requires running BIND9 instance
 prove -r t/integration
@@ -251,6 +263,7 @@ perl t/integration/02_snmp.t
 ```
 
 ### Manual Testing
+
 ```bash
 # Test statistics collection
 perl -I lib -e 'use SNMP::BIND9::Statistics; my $s = SNMP::BIND9::Statistics->new(); print Dumper($s->get_all_stats());'
@@ -262,15 +275,18 @@ snmpwalk -v2c -c public localhost:1161 1.3.6.1.4.1.99999.1
 ## 🔍 Monitoring Integration
 
 ### Nagios/Icinga
+
 ```bash
 # Check plugin example
 check_snmp -H localhost -C public -o 1.3.6.1.4.1.99999.1.2.5 -w 100 -c 200
 ```
 
 ### Zabbix Template
+
 Import the provided Zabbix template from `contrib/zabbix/bind9-snmp-template.xml`
 
 ### PRTG Custom Sensor
+
 Use the SNMP Custom Advanced sensor with the provided OIDs
 
 ## 🐛 Troubleshooting
@@ -278,33 +294,37 @@ Use the SNMP Custom Advanced sensor with the provided OIDs
 ### Common Issues
 
 1. **Permission Denied on Stats File**
+
    ```bash
    # Check file permissions
    ls -l /var/cache/bind/named.stats
-   
+
    # Fix permissions
    sudo chown bind:bind /var/cache/bind/named.stats
    ```
 
 2. **SNMP Port Already in Use**
+
    ```bash
    # Check what's using port 161
    sudo netstat -tulpn | grep 161
-   
+
    # Use alternative port in config
    port = 1161
    ```
 
 3. **rndc Command Fails**
+
    ```bash
    # Test rndc manually
    rndc stats
-   
+
    # Check rndc configuration
    rndc-confgen -a
    ```
 
 4. **No Statistics Generated**
+
    ```bash
    # Enable statistics in named.conf
    statistics-channels {
@@ -313,6 +333,7 @@ Use the SNMP Custom Advanced sensor with the provided OIDs
    ```
 
 ### Debug Mode
+
 ```bash
 # Run with debug logging
 perl bin/snmp_bind9_stats.pl --config=config.ini 2>&1 | tee debug.log
@@ -340,6 +361,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 5. Open a Pull Request
 
 ### Development Setup
+
 ```bash
 # Install development dependencies
 cpanm Test::More Test::Warn Test::Pod Test::Pod::Coverage
@@ -362,6 +384,7 @@ Please see our [Security Policy](SECURITY.md) for details on reporting vulnerabi
 ## 👨‍💻 Author
 
 **Thomas Vincent**
+
 - GitHub: [@thomasvincent](https://github.com/thomasvincent)
 
 ## 🙏 Acknowledgments
@@ -375,7 +398,7 @@ Please see our [Security Policy](SECURITY.md) for details on reporting vulnerabi
 - [BIND9 Documentation](https://bind9.readthedocs.io/)
 - [Net::SNMP Documentation](https://metacpan.org/pod/Net::SNMP)
 - [SNMP OID Registry](http://www.oid-info.com/)
-- [Project Wiki](https://github.com/thomasvincent/snmp-bind9-statistics/wiki)
+- [Project Wiki](https://github.com/somethingwithproof/snmp-bind9-statistics/wiki)
 
 ## 🗺️ Roadmap
 
@@ -390,4 +413,4 @@ Please see our [Security Policy](SECURITY.md) for details on reporting vulnerabi
 
 ---
 
-For more information, bug reports, or feature requests, please visit the [GitHub repository](https://github.com/thomasvincent/snmp-bind9-statistics).
+For more information, bug reports, or feature requests, please visit the [GitHub repository](https://github.com/somethingwithproof/snmp-bind9-statistics).
