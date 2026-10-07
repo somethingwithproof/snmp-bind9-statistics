@@ -1,7 +1,9 @@
 # SNMP BIND9 Statistics
 
 [![CI](https://github.com/somethingwithproof/snmp-bind9-statistics/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/somethingwithproof/snmp-bind9-statistics/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/somethingwithproof/snmp-bind9-statistics)](https://github.com/somethingwithproof/snmp-bind9-statistics/releases)
 [![License](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/somethingwithproof/snmp-bind9-statistics/badge)](https://scorecard.dev/viewer/?uri=github.com/somethingwithproof/snmp-bind9-statistics)
 
 A comprehensive Perl-based monitoring solution for BIND9 DNS servers that exposes statistics via SNMP for integration with network monitoring systems.
 
