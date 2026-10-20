@@ -12,3 +12,19 @@ updates:
       actions:
         patterns:
           - "*"
+
+  # pre-commit
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "ci(deps)"
+    groups:
+      pre-commit-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
