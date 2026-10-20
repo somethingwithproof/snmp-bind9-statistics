@@ -12,6 +12,9 @@ updates:
       actions:
         patterns:
           - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   # pre-commit
   - package-ecosystem: "pre-commit"
