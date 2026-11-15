@@ -35,7 +35,7 @@ jobs:
         persist-credentials: false
 
     - name: Set up Perl
-      uses: shogo82148/actions-setup-perl@3b59bd33efdae98406a9bc4b75a4aa041e11993a # v1
+      uses: shogo82148/actions-setup-perl@eebc5c886de14ebbfcd2493d49a12007d2c30477 # v1
       with:
         perl-version: ${{ matrix.perl-version }}
 
@@ -72,7 +72,7 @@ jobs:
         persist-credentials: false
 
     - name: Set up Perl
-      uses: shogo82148/actions-setup-perl@3b59bd33efdae98406a9bc4b75a4aa041e11993a # v1
+      uses: shogo82148/actions-setup-perl@eebc5c886de14ebbfcd2493d49a12007d2c30477 # v1
       with:
         perl-version: '5.34'
 
