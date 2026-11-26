@@ -27,7 +27,7 @@ BEGIN {
 }
 
 my @locales = SUPPORTED_LOCALES();
-is( scalar(@locales), 20, 'exactly 20 Tier 1 locales supported' );
+is( scalar(@locales), 45, 'exactly 45 locales supported' );
 
 my $en = load_catalog(DEFAULT_LOCALE);
 ok( ref($en) eq 'HASH' && scalar( keys %{$en} ) > 0, 'English catalog loads' );
@@ -82,6 +82,21 @@ my @norm_cases = (
     [ 'pt_PT',             'pt-BR' ],
     [ 'uk_UA.UTF-8',       'uk' ],
     [ 'x-private',         'en' ],
+    [ 'ar_EG.UTF-8',       'ar-EG' ],
+    [ 'ar-MA-u-nu-latn',   'ar-MA' ],
+    [ 'ar-Arab-EG',        'ar-EG' ],
+    [ 'ar-Arab-SA',        'ar' ],
+    [ 'fr_MA.UTF-8',       'fr-MA' ],
+    [ 'fr-SN-x-test',      'fr-SN' ],
+    [ 'fr_CA.UTF-8',       'fr' ],
+    [ 'af',                'af-ZA' ],
+    [ 'am_ET.UTF-8',       'am-ET' ],
+    [ 'sw_KE.UTF-8',       'sw-KE' ],
+    [ 'yo',                'yo-NG' ],
+    [ 'ig',                'ig-NG' ],
+    [ 'iw',                'he' ],
+    [ 'ms_MY.UTF-8',       'ms' ],
+    [ 'tl_PH.UTF-8',       'fil' ],
     [ 'xx_YY',             'en' ],
 );
 
