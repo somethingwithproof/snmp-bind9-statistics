@@ -32,7 +32,7 @@ our @SUPPORTED_LOCALES = (
 );
 
 my %LOCALE_BY_LOWER = map { lc($_) => $_ } @SUPPORTED_LOCALES;
-my %ZH_TRADITIONAL  = map { $_ => 1 } qw(zh-tw zh-hk zh-mo zh-hant);
+my %ZH_TRAD_REGION  = map { $_ => 1 } qw(tw hk mo);
 my %CATALOG_CACHE;
 my $ACTIVE_LOCALE;
 
@@ -55,12 +55,24 @@ sub normalize_locale {
     my $tag = lc($cleaned);
     $tag =~ s/_/-/g;
 
-    return $LOCALE_BY_LOWER{$tag} if exists $LOCALE_BY_LOWER{$tag};
-    return 'zh-TW' if $ZH_TRADITIONAL{$tag} || $tag =~ /\Azh-hant-/;
-    return 'zh-CN' if $tag eq 'zh' || $tag =~ /\Azh-/;
-    return 'pt-BR' if $tag eq 'pt' || $tag =~ /\Apt-/;
+    my @base;
+    for my $part ( split /-/, $tag ) {
+        last if length($part) == 1;
+        push @base, $part;
+    }
+    return DEFAULT_LOCALE unless @base;
 
-    my ($primary) = split /-/, $tag, 2;
+    my $norm = join( '-', @base );
+    return $LOCALE_BY_LOWER{$norm} if exists $LOCALE_BY_LOWER{$norm};
+
+    my $primary = $base[0];
+    if ( $primary eq 'zh' ) {
+        my %sub = map { $_ => 1 } @base[ 1 .. $#base ];
+        return 'zh-CN' if $sub{'hans'};
+        return 'zh-TW' if $sub{'hant'} || grep { $ZH_TRAD_REGION{$_} } keys %sub;
+        return 'zh-CN';
+    }
+    return 'pt-BR' if $primary eq 'pt';
     return exists $LOCALE_BY_LOWER{$primary}
         ? $LOCALE_BY_LOWER{$primary}
         : DEFAULT_LOCALE;
