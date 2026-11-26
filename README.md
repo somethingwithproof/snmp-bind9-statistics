@@ -132,16 +132,6 @@ port = 161
 agent_addr = 0.0.0.0
 ```
 
-### Environment Variables
-
-You can override configuration using environment variables:
-
-```bash
-export BIND9_STATS_FILE=/custom/path/named.stats
-export SNMP_COMMUNITY=secret
-export SNMP_PORT=1161
-```
-
 ## 🚀 Usage
 
 ### Basic Usage
@@ -283,10 +273,10 @@ perl t/integration/02_snmp.t
 
 ```bash
 # Test statistics collection
-perl -I lib -e 'use SNMP::BIND9::Statistics; my $s = SNMP::BIND9::Statistics->new(); print Dumper($s->get_all_stats());'
+perl -I lib -MData::Dumper -e 'use SNMP::BIND9::Statistics; my $s = SNMP::BIND9::Statistics->new(); print Dumper($s->get_all_stats());'
 
 # Test SNMP agent
-snmpwalk -v2c -c public localhost:1161 1.3.6.1.4.1.99999.1
+snmpwalk -v2c -c public localhost:161 1.3.6.1.4.1.99999.1
 ```
 
 ## 🔍 Monitoring Integration
@@ -297,10 +287,6 @@ snmpwalk -v2c -c public localhost:1161 1.3.6.1.4.1.99999.1
 # Check plugin example
 check_snmp -H localhost -C public -o 1.3.6.1.4.1.99999.1.2.5 -w 100 -c 200
 ```
-
-### Zabbix Template
-
-Import the provided Zabbix template from `contrib/zabbix/bind9-snmp-template.xml`
 
 ### PRTG Custom Sensor
 
