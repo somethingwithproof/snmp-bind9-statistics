@@ -132,16 +132,6 @@ port = 161
 agent_addr = 0.0.0.0
 ```
 
-### சூழல் மாறிகள்
-
-சூழல் மாறிகளைப் பயன்படுத்தி கட்டமைப்பை மேலெழுதலாம்:
-
-```bash
-export BIND9_STATS_FILE=/custom/path/named.stats
-export SNMP_COMMUNITY=secret
-export SNMP_PORT=1161
-```
-
 ## 🚀 பயன்பாடு
 
 ### அடிப்படைப் பயன்பாடு
@@ -283,10 +273,10 @@ perl t/integration/02_snmp.t
 
 ```bash
 # Test statistics collection
-perl -I lib -e 'use SNMP::BIND9::Statistics; my $s = SNMP::BIND9::Statistics->new(); print Dumper($s->get_all_stats());'
+perl -I lib -MData::Dumper -e 'use SNMP::BIND9::Statistics; my $s = SNMP::BIND9::Statistics->new(); print Dumper($s->get_all_stats());'
 
 # Test SNMP agent
-snmpwalk -v2c -c public localhost:1161 1.3.6.1.4.1.99999.1
+snmpwalk -v2c -c public localhost:161 1.3.6.1.4.1.99999.1
 ```
 
 ## 🔍 கண்காணிப்பு ஒருங்கிணைப்பு
@@ -297,10 +287,6 @@ snmpwalk -v2c -c public localhost:1161 1.3.6.1.4.1.99999.1
 # Check plugin example
 check_snmp -H localhost -C public -o 1.3.6.1.4.1.99999.1.2.5 -w 100 -c 200
 ```
-
-### Zabbix வார்ப்புரு
-
-`contrib/zabbix/bind9-snmp-template.xml` இலிருந்து வழங்கப்பட்ட Zabbix வார்ப்புருவை இறக்குமதி செய்யவும்
 
 ### PRTG தனிப்பயன் உணரி
 
