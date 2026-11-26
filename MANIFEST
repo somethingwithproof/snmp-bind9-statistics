@@ -14,6 +14,7 @@ docs/i18n/ar-EG/README.md
 docs/i18n/ar-MA/README.md
 docs/i18n/ar/README.md
 docs/i18n/bn/README.md
+docs/i18n/bs/README.md
 docs/i18n/de/README.md
 docs/i18n/es/README.md
 docs/i18n/fa/README.md
@@ -24,6 +25,7 @@ docs/i18n/fr/README.md
 docs/i18n/ha-NG/README.md
 docs/i18n/he/README.md
 docs/i18n/hi/README.md
+docs/i18n/hr/README.md
 docs/i18n/id/README.md
 docs/i18n/ig-NG/README.md
 docs/i18n/it/README.md
@@ -38,6 +40,7 @@ docs/i18n/pt-BR/README.md
 docs/i18n/ru/README.md
 docs/i18n/rw-RW/README.md
 docs/i18n/so-SO/README.md
+docs/i18n/sr/README.md
 docs/i18n/sv/README.md
 docs/i18n/sw-KE/README.md
 docs/i18n/ta/README.md
@@ -60,6 +63,7 @@ lib/SNMP/BIND9/I18n/ar.pm
 lib/SNMP/BIND9/I18n/ar_EG.pm
 lib/SNMP/BIND9/I18n/ar_MA.pm
 lib/SNMP/BIND9/I18n/bn.pm
+lib/SNMP/BIND9/I18n/bs.pm
 lib/SNMP/BIND9/I18n/de.pm
 lib/SNMP/BIND9/I18n/en.pm
 lib/SNMP/BIND9/I18n/es.pm
@@ -71,6 +75,7 @@ lib/SNMP/BIND9/I18n/fr_SN.pm
 lib/SNMP/BIND9/I18n/ha_NG.pm
 lib/SNMP/BIND9/I18n/he.pm
 lib/SNMP/BIND9/I18n/hi.pm
+lib/SNMP/BIND9/I18n/hr.pm
 lib/SNMP/BIND9/I18n/id.pm
 lib/SNMP/BIND9/I18n/ig_NG.pm
 lib/SNMP/BIND9/I18n/it.pm
@@ -85,6 +90,7 @@ lib/SNMP/BIND9/I18n/pt_BR.pm
 lib/SNMP/BIND9/I18n/ru.pm
 lib/SNMP/BIND9/I18n/rw_RW.pm
 lib/SNMP/BIND9/I18n/so_SO.pm
+lib/SNMP/BIND9/I18n/sr.pm
 lib/SNMP/BIND9/I18n/sv.pm
 lib/SNMP/BIND9/I18n/sw_KE.pm
 lib/SNMP/BIND9/I18n/ta.pm

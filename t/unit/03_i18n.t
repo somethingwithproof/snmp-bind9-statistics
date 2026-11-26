@@ -27,7 +27,7 @@ BEGIN {
 }
 
 my @locales = SUPPORTED_LOCALES();
-is( scalar(@locales), 45, 'exactly 45 locales supported' );
+is( scalar(@locales), 48, 'exactly 48 locales supported' );
 
 my $en = load_catalog(DEFAULT_LOCALE);
 ok( ref($en) eq 'HASH' && scalar( keys %{$en} ) > 0, 'English catalog loads' );
@@ -97,6 +97,19 @@ my @norm_cases = (
     [ 'iw',                'he' ],
     [ 'ms_MY.UTF-8',       'ms' ],
     [ 'tl_PH.UTF-8',       'fil' ],
+    [ 'bs',                'bs' ],
+    [ 'bs-BA',             'bs' ],
+    [ 'bs_BA.UTF-8',       'bs' ],
+    [ 'hr',                'hr' ],
+    [ 'hr-HR',             'hr' ],
+    [ 'hr_HR.UTF-8',       'hr' ],
+    [ 'sr',                'sr' ],
+    [ 'sr-RS',             'sr' ],
+    [ 'sr_RS.UTF-8',       'sr' ],
+    [ 'sr-Cyrl',           'sr' ],
+    [ 'sr-Latn',           'sr' ],
+    [ 'sr-Cyrl-RS',        'sr' ],
+    [ 'sr-Latn-RS',        'sr' ],
     [ 'xx_YY',             'en' ],
 );
 
@@ -138,5 +151,17 @@ is( t('nonexistent.key'), 'nonexistent.key', 'unknown key falls back to key' );
 like( format_help('en'), qr/Usage: snmp_bind9_stats\.pl \[options\]/, 'English help unchanged' );
 like( format_help('de'), qr/--lang=LOCALE/, 'German help preserves CLI flags' );
 isnt( format_help('de'), format_help('en'), 'German help differs from English' );
+like( format_help('sr'), qr/\p{Cyrillic}/, 'Serbian help uses Cyrillic script' );
+isnt( format_help('bs'), format_help('hr'), 'Bosnian and Croatian help are distinct' );
+isnt(
+    t( 'log.snmp_run_error', { error => 'x' }, 'bs' ),
+    t( 'log.snmp_run_error', { error => 'x' }, 'hr' ),
+    'Bosnian and Croatian error terminology differ'
+);
+like(
+    t( 'log.snmp_run_error', { error => 'x' }, 'sr' ),
+    qr/\p{Cyrillic}/,
+    'Serbian diagnostic uses Cyrillic script'
+);
 
 done_testing();

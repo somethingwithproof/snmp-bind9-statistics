@@ -34,6 +34,7 @@ our @SUPPORTED_LOCALES = (
     'so-SO', 'sw-KE', 'xh-ZA', 'yo-NG', 'zu-ZA',
     'bn',    'fa',    'he',    'mr',    'ta',
     'te',    'th',    'ur',    'ms',    'fil',
+    'bs',    'hr',    'sr',
 );
 
 my %LOCALE_BY_LOWER = map { lc($_) => $_ } @SUPPORTED_LOCALES;
@@ -199,7 +200,7 @@ SNMP::BIND9::I18n - Zero-dependency localization for SNMP::BIND9 CLI and diagnos
 
 =head1 DESCRIPTION
 
-Provides 20-locale catalog lookup using only core Perl modules. Honors
+Provides 48-locale catalog lookup using only core Perl modules. Honors
 C<LC_ALL>, C<LC_MESSAGES>, and C<LANG> with fallback to English (C<en>).
 
 =head1 AUTHOR
