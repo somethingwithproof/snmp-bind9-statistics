@@ -150,7 +150,14 @@ export SNMP_PORT=1161
 
 # Show version
 ./bin/snmp_bind9_stats.pl --version
+
+# Display localized CLI help (supports 20 locales via --lang or LC_ALL/LC_MESSAGES/LANG)
+./bin/snmp_bind9_stats.pl --lang=de --help
 ```
+
+### Localization
+
+CLI usage and log diagnostics support 20 locales (`en`, `de`, `es`, `fr`, `it`, `pt-BR`, `nl`, `ru`, `uk`, `ja`, `ko`, `zh-CN`, `zh-TW`, `ar`, `hi`, `pl`, `tr`, `sv`, `vi`, `id`) with zero external CPAN dependencies via `SNMP::BIND9::I18n`. Resolution honors `--lang`, then `LC_ALL`, `LC_MESSAGES`, and `LANG`, falling back to `en`. SNMP OIDs, protocol tokens, and numeric metric values remain unchanged across all locales.
 
 ### Running as a Service
 

@@ -15,6 +15,7 @@ use FindBin qw($Bin);
 use lib "$Bin/../lib";
 use SNMP::BIND9::Statistics;
 use SNMP::BIND9::Agent;
+use SNMP::BIND9::I18n qw(format_help set_locale t);
 use POSIX qw(strftime);
 use Time::HiRes qw(sleep);
 use Scalar::Util qw(blessed);
@@ -39,44 +40,55 @@ sub init_logging {
 sub parse_options {
     my %opts;
     GetOptions(
-        'config=s'  => \$opts{config},
-        'help|?'    => \$opts{help},
-        'man'       => \$opts{man},
-        'version'   => \$opts{version},
+        'config=s' => \$opts{config},
+        'lang=s'   => \$opts{lang},
+        'help|?'   => \$opts{help},
+        'man'      => \$opts{man},
+        'version'  => \$opts{version},
     ) or pod2usage(2);
 
-    if ($opts{help}) {
-        pod2usage(1);
+    binmode( STDOUT, ':encoding(UTF-8)' );
+    binmode( STDERR, ':encoding(UTF-8)' );
+    set_locale( $opts{lang} );
+
+    if ( $opts{help} ) {
+        print format_help();
+        exit 0;
     }
-    if ($opts{man}) {
-        pod2usage(-exitval => 0, -verbose => 2);
+    if ( $opts{man} ) {
+        pod2usage( -exitval => 0, -verbose => 2 );
     }
-    if ($opts{version}) {
-        say "snmp_bind9_stats.pl version $VERSION";
+    if ( $opts{version} ) {
+        say t( 'cli.version_line', { version => $VERSION } );
         exit 0;
     }
 
     # Default config file location
     $opts{config} ||= "$Bin/../config.ini";
-    
+
     return \%opts;
 }
 
 # Load configuration
 sub load_config {
     my $config_file = shift;
-    
-    unless (-e $config_file) {
-        ERROR("Config file not found: $config_file");
+
+    unless ( -e $config_file ) {
+        ERROR( t( 'log.config_not_found', { file => $config_file } ) );
         exit 1;
     }
-    
-    my $cfg = Config::IniFiles->new(-file => $config_file);
+
+    my $cfg = Config::IniFiles->new( -file => $config_file );
     unless ($cfg) {
-        ERROR("Failed to parse config file: " . join("\n", @Config::IniFiles::errors));
+        ERROR(
+            t(
+                'log.config_parse_failed',
+                { errors => join( "\n", @Config::IniFiles::errors ) }
+            )
+        );
         exit 1;
     }
-    
+
     return $cfg;
 }
 
@@ -86,94 +98,103 @@ our $AGENT;
 # Signal handler for graceful shutdown
 sub sig_handler {
     my $sig = shift;
-    INFO("Received signal $sig, shutting down gracefully...");
-    
-    if ($AGENT && blessed($AGENT) && $AGENT->can('stop')) {
+    INFO( t( 'log.signal_shutdown', { signal => $sig } ) );
+
+    if ( $AGENT && blessed($AGENT) && $AGENT->can('stop') ) {
         $AGENT->stop();
-        INFO("SNMP BIND9 Statistics Agent stopped");
+        INFO( t('log.agent_stopped') );
     }
-    
+
     exit 0;
 }
 
 # Main function
 sub main {
     my $opts = parse_options();
-    my $cfg = load_config($opts->{config});
-    
+    my $cfg  = load_config( $opts->{config} );
+
     # Initialize logging with configured level
-    my $log_level = $cfg->val('general', 'log_level', 'INFO');
+    my $log_level = $cfg->val( 'general', 'log_level', 'INFO' );
     init_logging($log_level);
-    
-    INFO("Starting SNMP BIND9 Statistics Agent v$VERSION");
-    
+
+    INFO( t( 'log.agent_starting', { version => $VERSION } ) );
+
     # Create statistics collector
     my $stats;
     eval {
         $stats = SNMP::BIND9::Statistics->new(
-            stats_file    => $cfg->val('general', 'stats_file', '/var/cache/bind/named.stats'),
-            rndc_command  => $cfg->val('general', 'rndc_command', 'rndc stats'),
-            poll_interval => $cfg->val('general', 'poll_interval', 300),
+            stats_file => $cfg->val(
+                'general', 'stats_file', '/var/cache/bind/named.stats'
+            ),
+            rndc_command =>
+              $cfg->val( 'general', 'rndc_command', 'rndc stats' ),
+            poll_interval => $cfg->val( 'general', 'poll_interval', 300 ),
         );
     };
     if ($@) {
-        ERROR("Failed to initialize statistics collector: $@");
+        ERROR( t( 'log.stats_init_failed_detail', { error => "$@" } ) );
         exit 1;
     }
-    
+
     unless ($stats) {
-        ERROR("Failed to initialize statistics collector");
+        ERROR( t('log.stats_init_failed') );
         exit 1;
     }
-    
+
     # Create SNMP agent
     eval {
         $AGENT = SNMP::BIND9::Agent->new(
-            community  => $cfg->val('snmp', 'community', 'public'),
-            port       => $cfg->val('snmp', 'port', 161),
-            agent_addr => $cfg->val('snmp', 'agent_addr', '0.0.0.0'),
+            community  => $cfg->val( 'snmp', 'community',  'public' ),
+            port       => $cfg->val( 'snmp', 'port',       161 ),
+            agent_addr => $cfg->val( 'snmp', 'agent_addr', '0.0.0.0' ),
             stats      => $stats,
         );
     };
     if ($@) {
-        ERROR("Failed to initialize SNMP agent: $@");
+        ERROR( t( 'log.agent_init_failed_detail', { error => "$@" } ) );
         exit 1;
     }
-    
+
     unless ($AGENT) {
-        ERROR("Failed to initialize SNMP agent");
+        ERROR( t('log.agent_init_failed') );
         exit 1;
     }
-    
+
     # Start the agent
-    INFO("Starting SNMP agent on " . $cfg->val('snmp', 'agent_addr', '0.0.0.0') . ":" . $cfg->val('snmp', 'port', 161));
-    
-    eval {
-        $AGENT->run();
-    };
+    INFO(
+        t(
+            'log.snmp_starting',
+            {
+                addr => $cfg->val( 'snmp', 'agent_addr', '0.0.0.0' ),
+                port => $cfg->val( 'snmp', 'port',       161 ),
+            }
+        )
+    );
+
+    eval { $AGENT->run(); };
     if ($@) {
-        ERROR("Error running SNMP agent: $@");
+        ERROR( t( 'log.snmp_run_error', { error => "$@" } ) );
         exit 1;
     }
-    
+
     # Infinite loop to keep the script running
     # Signal handlers will catch SIGINT and SIGTERM for shutdown
     while (1) {
         eval {
             # Force statistics update every poll interval
             $stats->collect_stats(1);
-            DEBUG("Updated statistics");
+            DEBUG( t('log.stats_updated') );
         };
         if ($@) {
-            WARN("Error collecting statistics: $@");
+            WARN( t( 'log.stats_collect_error', { error => "$@" } ) );
         }
-        
-        sleep($cfg->val('general', 'poll_interval', 300));
+
+        sleep( $cfg->val( 'general', 'poll_interval', 300 ) );
     }
-    
+
     # We should never reach here due to the signal handlers,
     # but just in case:
-    INFO("SNMP BIND9 Statistics Agent stopped");
+    INFO( t('log.agent_stopped') );
 }
 
 # Run the main function

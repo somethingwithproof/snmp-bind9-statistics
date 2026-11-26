@@ -9,6 +9,7 @@ use 5.010;
 use Net::SNMP qw(:snmp);
 use Log::Log4perl qw(:easy);
 use Scalar::Util qw(blessed);
+use SNMP::BIND9::I18n qw(t);
 
 our $VERSION = '1.0.0';
 
@@ -30,7 +31,7 @@ sub new {
     };
     
     unless ($self->{stats} && blessed($self->{stats}) && $self->{stats}->can('get_all_stats')) {
-        ERROR("Invalid statistics object provided");
+        ERROR(t('log.invalid_stats_object'));
         return;
     }
     
@@ -79,14 +80,14 @@ sub init_oid_map {
     $self->{oid_map}{"$BASE_OID.3.$counter"} = 'resolver_query_errors';             $counter++;
     $self->{oid_map}{"$BASE_OID.3.$counter"} = 'resolver_EDNS0_query_failures';     $counter++;
     
-    DEBUG("Initialized " . scalar(keys %{$self->{oid_map}}) . " OID mappings");
+    DEBUG(t('log.oid_mappings_initialized', { count => scalar(keys %{$self->{oid_map}}) }));
 }
 
 # Start the SNMP agent
 sub run {
     my ($self) = @_;
     
-    INFO("Starting SNMP agent on $self->{agent_addr}:$self->{port}");
+    INFO(t('log.snmp_starting', { addr => $self->{agent_addr}, port => $self->{port} }));
     
     # For demonstration purposes, we'll create a simple SNMP responder
     # In a real implementation, you might use Net::SNMP::Agent or similar
@@ -102,14 +103,14 @@ sub run {
     );
     
     if (!defined $session) {
-        ERROR("Failed to create SNMP session: $error");
+        ERROR(t('log.snmp_session_failed', { error => $error }));
         return;
     }
     
     $self->{session} = $session;
     $self->{running} = 1;
     
-    INFO("SNMP agent started successfully");
+    INFO(t('log.snmp_started'));
     
     # Note: In a real implementation, you would set up an SNMP agent
     # that listens for requests and responds with the statistics
@@ -128,7 +129,7 @@ sub stop {
     }
     
     $self->{running} = 0;
-    INFO("SNMP agent stopped");
+    INFO(t('log.snmp_stopped'));
 }
 
 # Get value for an OID
