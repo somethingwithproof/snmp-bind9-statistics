@@ -9,6 +9,7 @@ use 5.010;
 use File::Slurp qw(read_file write_file);
 use Log::Log4perl qw(:easy);
 use Time::HiRes qw(time);
+use SNMP::BIND9::I18n qw(t);
 
 our $VERSION = '1.0.0';
 
@@ -43,7 +44,7 @@ sub collect_stats {
     my $result = system($self->{rndc_command});
     
     if ($result != 0) {
-        WARN("Failed to execute rndc stats command");
+        WARN(t('log.rndc_failed'));
         return $self->{cache};
     }
     
@@ -55,7 +56,7 @@ sub collect_stats {
         $self->parse_stats_file();
         $self->{last_update} = $now;
     } else {
-        WARN("Stats file not found: $self->{stats_file}");
+        WARN(t('log.stats_file_not_found', { file => $self->{stats_file} }));
     }
     
     return $self->{cache};
@@ -70,7 +71,7 @@ sub parse_stats_file {
         $content = read_file($self->{stats_file});
     };
     if ($@) {
-        ERROR("Failed to read stats file: $@");
+        ERROR(t('log.stats_read_failed', { error => "$@" }));
         return;
     }
     
@@ -81,7 +82,7 @@ sub parse_stats_file {
     $self->parse_zone_statistics($content);
     $self->parse_resolver_statistics($content);
     
-    DEBUG("Parsed " . scalar(keys %{$self->{cache}}) . " statistics");
+    DEBUG(t('log.parsed_stats', { count => scalar(keys %{$self->{cache}}) }));
 }
 
 # Parse incoming queries section
