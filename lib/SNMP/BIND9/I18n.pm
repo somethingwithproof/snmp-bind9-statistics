@@ -29,9 +29,30 @@ our @SUPPORTED_LOCALES = (
     'pt-BR', 'nl',    'ru',    'uk',    'ja',
     'ko',    'zh-CN', 'zh-TW', 'ar',    'hi',
     'pl',    'tr',    'sv',    'vi',    'id',
+    'af-ZA', 'am-ET', 'ar-EG', 'ar-MA', 'fr-MA',
+    'fr-SN', 'ha-NG', 'ig-NG', 'mg-MG', 'rw-RW',
+    'so-SO', 'sw-KE', 'xh-ZA', 'yo-NG', 'zu-ZA',
+    'bn',    'fa',    'he',    'mr',    'ta',
+    'te',    'th',    'ur',    'ms',    'fil',
 );
 
 my %LOCALE_BY_LOWER = map { lc($_) => $_ } @SUPPORTED_LOCALES;
+my %PRIMARY_ALIASES = (
+    af => 'af-ZA',
+    am => 'am-ET',
+    ha => 'ha-NG',
+    ig => 'ig-NG',
+    iw => 'he',
+    mg => 'mg-MG',
+    pt => 'pt-BR',
+    rw => 'rw-RW',
+    so => 'so-SO',
+    sw => 'sw-KE',
+    tl => 'fil',
+    xh => 'xh-ZA',
+    yo => 'yo-NG',
+    zu => 'zu-ZA',
+);
 my %ZH_TRAD_REGION  = map { $_ => 1 } qw(tw hk mo);
 my %CATALOG_CACHE;
 my $ACTIVE_LOCALE;
@@ -72,7 +93,11 @@ sub normalize_locale {
         return 'zh-TW' if $sub{'hant'} || grep { $ZH_TRAD_REGION{$_} } keys %sub;
         return 'zh-CN';
     }
-    return 'pt-BR' if $primary eq 'pt';
+    if ( @base >= 3 ) {
+        my $lang_region = "$primary-$base[2]";
+        return $LOCALE_BY_LOWER{$lang_region} if exists $LOCALE_BY_LOWER{$lang_region};
+    }
+    return $PRIMARY_ALIASES{$primary} if exists $PRIMARY_ALIASES{$primary};
     return exists $LOCALE_BY_LOWER{$primary}
         ? $LOCALE_BY_LOWER{$primary}
         : DEFAULT_LOCALE;
